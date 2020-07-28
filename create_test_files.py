@@ -5,8 +5,8 @@ import os
 import test_tools.csv_file_creator as csv_creator
 
 THIS_FOLDER = os.path.dirname(os.path.realpath(__file__))
-TEST_FOLDER_PREFIX = "csv_tests_files"
-TEST_FOLDER = os.path.join(THIS_FOLDER, TEST_FOLDER_PREFIX)
+TEST_ROOT_FOLDER = os.path.join(THIS_FOLDER, "tests_random_files")
+TEST_FOLDER_NAME = "test_cvs_files"
 
 
 def create_csv_files(path):
@@ -17,39 +17,49 @@ def create_csv_files(path):
             path str(): the folder path where the files are going
             to be generated
     """
-    for _, n in enumerate(range(arguments.number_of_files)):
-        file_path = os.path.join(path, "file{}".format(n))
+    for _, number in enumerate(range(arguments.number_of_files)):
+        file_path = os.path.join(path, "file{}".format(number))
         csv_creator.create_csv_file(arguments.number_of_lines, file_path)
 
 
 def create_root_test_folder():
-    """Creates the TEST_FOLDER_PREFIX folder"""
-    if not os.path.exists(TEST_FOLDER_PREFIX):
-        os.mkdir(TEST_FOLDER)
+    """Creates the TEST_ROOT_FOLDER folder"""
+    if not os.path.exists(TEST_ROOT_FOLDER):
+        os.mkdir(TEST_ROOT_FOLDER)
+
+
+def get_max_number_from_folder():
+    """Returns the number of the last folder created `test_csv_files_*` if it exists.
+
+    Returns:
+        latest_folder_number (int): Find the number of the last folder created
+    """
+    latest_folder_number = 0
+    test_folders = []
+    for folder in os.listdir(TEST_ROOT_FOLDER):
+        if os.path.isdir(os.path.join(TEST_ROOT_FOLDER, folder)) and folder.startswith(TEST_FOLDER_NAME):
+            test_folders.append(folder)
+    if len(test_folders) > 0:
+        latest_folder_number = max(
+            [int(folder.split("_")[3])for folder in test_folders])
+        latest_folder_number += 1
+    return latest_folder_number
 
 
 def create_test_folder():
-    """Creates a new folder path according to the number_of_lines argument.
+    """Creates a new folder path according to the arguments acquired.
 
     Returns:
-        new_tests_folder_file (str): Path where the files will be created
+        test_folder_complete_name (str): Name of the new test folder where the files will be created
     """
-    test_folders = []
-    test_folder_path = os.path.join(THIS_FOLDER, TEST_FOLDER_PREFIX)
-    test_csv_folder = "test_csv_files_"
-    new_test_folder = test_csv_folder + \
-        "0_{}".format(arguments.number_of_lines)
-    for folder in os.listdir(test_folder_path):
-        if os.path.isdir(os.path.join(test_folder_path, folder)) and folder.startswith(test_csv_folder):
-            test_folders.append(folder)
-    if len(test_folders) > 0:
-        max_old_folder = max([int(old_folder.split("_")[3])
-                              for old_folder in test_folders])
-        new_test_folder = test_csv_folder + \
-            "{}_{}".format(max_old_folder + 1, arguments.number_of_lines)
-    new_tests_folder_path = os.path.join(test_folder_path, new_test_folder)
-    os.mkdir(new_tests_folder_path)
-    return new_tests_folder_path
+    latest_folder_number = get_max_number_from_folder()
+    test_folder_name = TEST_FOLDER_NAME + \
+        "_{}_{}_{}".format(latest_folder_number,
+                           arguments.number_of_files, arguments.number_of_lines)
+    test_folder_complete_name = os.path.join(
+        TEST_ROOT_FOLDER, test_folder_name)
+    os.mkdir(test_folder_complete_name)
+    return test_folder_complete_name
 
 
 if __name__ == "__main__":
