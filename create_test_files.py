@@ -5,8 +5,8 @@ import os
 import test_tools.csv_file_creator as csv_creator
 
 THIS_FOLDER = os.path.dirname(os.path.realpath(__file__))
-TEST_ROOT_FOLDER = os.path.join(THIS_FOLDER, "tests_random_files")
-TEST_FOLDER_NAME = "test_cvs_files"
+TEST_ROOT_FOLDER = os.path.join(THIS_FOLDER, "random_csv_files")
+TEST_FOLDER_NAME = "random_csv_files"
 
 
 def create_csv_files(path):
@@ -17,7 +17,8 @@ def create_csv_files(path):
             path str(): the folder path where the files are going
             to be generated
     """
-    for _, number in enumerate(range(arguments.number_of_files)):
+    for number, _ in enumerate(range(arguments.number_of_files), 1):
+        print(number)
         file_path = os.path.join(path, "file{}".format(number))
         csv_creator.create_csv_file(arguments.number_of_lines, file_path)
 
