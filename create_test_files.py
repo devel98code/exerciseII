@@ -18,7 +18,6 @@ def create_csv_files(path):
             to be generated
     """
     for number, _ in enumerate(range(arguments.number_of_files), 1):
-        print(number)
         file_path = os.path.join(path, "file{}".format(number))
         csv_creator.create_csv_file(arguments.number_of_lines, file_path)
 
